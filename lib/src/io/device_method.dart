@@ -55,7 +55,22 @@ class MethodChannelUnityWidget extends UnityWidgetPlatform {
   @override
   Future<void> init(int unityId) {
     MethodChannel channel = ensureChannelInitialized(unityId);
-    return channel.invokeMethod<void>('unity#waitForUnity');
+
+    // temporary workaround, unity#waitForUnity doesn’t appear to have a proper
+    // implementation in Swift, so implement a simple workaround in Flutter
+    return _checkIsLoaded(Completer(), channel)
+        .then((v) => channel.invokeMethod<void>('unity#waitForUnity'));
+  }
+
+  Future<void> _checkIsLoaded(Completer completer, MethodChannel channel) {
+    return channel.invokeMethod<bool>('unity#isLoaded').then((value) {
+      if (value != null && value) {
+        completer.complete(true);
+      } else {
+        return Future.delayed(Duration(milliseconds: 500))
+            .then((value) => _checkIsLoaded(completer, channel));
+      }
+    });
   }
 
   /// Dispose of the native resources.
