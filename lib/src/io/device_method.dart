@@ -54,6 +54,8 @@ class MethodChannelUnityWidget extends UnityWidgetPlatform {
   /// This method is called when the plugin is first initialized.
   @override
   Future<void> init(int unityId) {
+    print("---- FLUNITY ---- Init on Unity ID = $unityId");
+
     MethodChannel channel = ensureChannelInitialized(unityId);
 
     // temporary workaround, unity#waitForUnity doesn’t appear to have a proper
@@ -266,6 +268,8 @@ class MethodChannelUnityWidget extends UnityWidgetPlatform {
     required String methodName,
     required String message,
   }) async {
+    print("---- FLUNITY ---- Called postMessage for $unityId");
+
     await channel(unityId).invokeMethod('unity#postMessage', <String, dynamic>{
       'gameObject': gameObject,
       'methodName': methodName,
@@ -280,6 +284,8 @@ class MethodChannelUnityWidget extends UnityWidgetPlatform {
     required String methodName,
     required Map message,
   }) async {
+    print("---- FLUNITY ---- Called postJsonMessage for $unityId");
+
     await channel(unityId).invokeMethod('unity#postMessage', <String, dynamic>{
       'gameObject': gameObject,
       'methodName': methodName,
